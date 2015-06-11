@@ -39,11 +39,10 @@ void schedule();
 
 void irq_handle(TrapFrame *tf) {
 	int irq = tf->irq;
-
+	
 	if (irq < 0) {
 		panic("Unhandled exception!");
 	}
-
 	if(irq==0x80){
 		//to do system call
 	}
@@ -54,6 +53,10 @@ void irq_handle(TrapFrame *tf) {
 		/* The following code is to handle external interrupts.
 		 * You will use this code in Lab2.  */
 		int irq_id = irq - 1000;
+		//if(irq_id==1)
+		//	printk("key board~\n");
+		//if(irq_id==0)
+		//	printk("timer~\n");
 		assert(irq_id < NR_HARD_INTR);
 		struct IRQ_t *f = handles[irq_id];
 

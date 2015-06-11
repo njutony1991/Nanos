@@ -1,6 +1,6 @@
 #include "kernel.h"
 
-int lockcount = 0;
+static int lockcount = 0;
 
 extern ListHead ready;
 extern ListHead block;
@@ -24,16 +24,23 @@ void unlock(){
 /**sleep_on_sem and wakeup_from_sem is call after lock().
    So there is no need to add extra atomic guard in it**/
 static void sleep_on_sem(Sem *s){
+  if(!list_empty(&ready)){
+    current->in_ready = 0;
   	list_del(&(current->list));
   	list_init(&(current->list));
   	list_add_before(&(s->block),&(current->list));
-  	asm volatile("int $0x80");
+  }
+  asm volatile("int $0x80");
 }
+
 static void wakeup_from_sem(Sem *s){
+  if(!list_empty(&s->block)){
   	PCB *p = list_entry((s->block).next,PCB,list);
+    p->in_ready = 1;
    	list_del(&(p->list));
-   	list_init(&(p->list));
-   	list_add_before(&ready,&(p->list));
+    list_init(&(p->list));
+    list_add_before(&ready,&(p->list));
+  }
 }
 
 /**P&V for Sem**/
@@ -41,10 +48,13 @@ void P(Sem *s){
 	lock();
 	(s->token)--;
 	if(s->token<0){
+     unlock();
 	   sleep_on_sem(s);
 	}
-	unlock();
+  else
+    unlock();
 }
+
 void V(Sem *s){
 	lock();
 	(s->token)++;

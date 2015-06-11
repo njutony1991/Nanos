@@ -2,12 +2,9 @@
 #define __PROCESS_H__
 
 #define KSTACK_SIZE 4096
+#define PCB_NUM 50
 #define ANY -1
 #include "adt/list.h"
-
-typedef int pid_t;
-typedef int off_t;
-typedef int size_t;
 
 typedef struct Semaphore{
 	int token;
@@ -17,35 +14,44 @@ typedef struct Semaphore{
 typedef struct PCB {
 	void *tf;
 	uint8_t kstack[KSTACK_SIZE];
-	pid_t id;					// pid
+	pid_t pid;					// pid
+	int in_ready;
 	/**Sem for add/get messages**/
 	Sem message_guard; 			// mutual exclusion
  	Sem empty;         			// can't get message from empty messages
- 	/**message queue**/
+ 	
+ 	//Sem message_guard[PCB_NUM+1];
+	//Sem any_guard;
+	/**message queue**/
  	ListHead messages;
+
  	/**PCB linkedlist**/
  	ListHead list;
 } PCB;
 
 extern PCB *current;
 
-typedef struct Message {
-	pid_t src, dest;
-	union {
-		int type;
-		int ret;
-	};
-	union {
-		int i[5];
-		struct {
-			pid_t req_pid;
-			int dev_id;
-			void *buf;
-			off_t offset;
-			size_t len;
-		};
-	};
-	ListHead list;
-} Msg;
+PCB*
+create_kthread(void *fun,int ch,PCB **next);
+
+PCB* 
+fetch_pcb(pid_t pid);
+
+void lock(void);
+void unlock(void);
+
+void sleep(void);
+void wakeup(PCB *p);
+
+void P(Sem*);
+void V(Sem*);
+
+
+void copy_from_kernel(PCB* pcb, void* dest, void* src, int len);
+void copy_to_kernel(PCB* pcb, void* dest, void* src, int len);
+
+void strcpy_to_kernel(PCB* pcb, char* dest, char* src);
+void strcpy_from_kernel(PCB* pcb, char* dest, char* src);
+
 
 #endif

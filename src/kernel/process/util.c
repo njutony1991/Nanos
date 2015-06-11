@@ -8,8 +8,6 @@
 ListHead ready,block,free;
 /**thread schedule**/
 void schedule(void);
-void sleep(void);
-void wakeup(PCB *p);
 
 /**ipc**/ 
 void test_setup();
@@ -23,19 +21,41 @@ void D();
 void E();
 
 /**pid index,free PCB buffer**/
-int i=0,id=0;
-PCB procs[20];
-PCB *pa,*pb,*pc,*pd,*pe;
-//Sem sw_guard;   // mutual exclusion for sleep&wakeup
+static int id=1;
+/**num of allocated PCBs**/
+static int num = 0;
 
-PCB* get_proc(pid_t pid){
-    assert(pid <= id);
-    return &procs[pid];
+PCB proc_pool[PCB_NUM];
+
+PCB *pa,*pb,*pc,*pd,*pe;
+
+PCB* fetch_pcb(pid_t pid){
+    lock();
+    PCB *pcb = NULL;
+    int i=0;
+    for(;i<num;i++){
+        pcb = &proc_pool[i];
+        assert(pcb);
+        if(pcb->pid==pid){
+            unlock();
+            return pcb;
+        }
+    }
+    unlock();
+    return NULL;
 }
 
 PCB*
 create_kthread(void *fun,int ch,PCB **next) {
-	PCB *funpcb = & procs[i++];
+    if(list_empty(&free)){
+        panic("no room for more threads\n");
+    }
+
+	PCB *funpcb = list_entry(free.next, PCB, list);
+    list_del(&funpcb->list);
+    list_init(&funpcb->list);
+    num++;
+    
 	TrapFrame *tf = (TrapFrame *)(funpcb->kstack + KSTACK_SIZE-12)-1;
 	tf->eflags = 0x202;
 	tf->cs = SELECTOR_KERNEL(SEG_KERNEL_CODE);
@@ -58,20 +78,43 @@ create_kthread(void *fun,int ch,PCB **next) {
     }
 
 	funpcb->tf = tf;
-	funpcb->id = id++;
-    create_sem(&(funpcb->message_guard),1);
-    create_sem(&(funpcb->empty),0);
-    list_init(&(funpcb->messages));
+	funpcb->pid = id++;
+    funpcb->in_ready = 0;
+    
+    create_sem(&funpcb->message_guard,1);
+    create_sem(&funpcb->empty,0);
+  
+    list_del(&funpcb->messages);
+    list_init(&funpcb->messages);
+    
 	return funpcb;
 }
 
+void print_ready(){
+    printk("ready:\n");
+    ListHead *p1;
+    list_foreach(p1,&ready)
+        printk("id : %d ,tf : %x\n",((PCB *)(list_entry(p1,PCB,list)))->pid,
+                                    ((PCB *)(list_entry(p1,PCB,list)))->tf);
+    printk("-------------\n");
+}
+
+void drivertest();
 
 void
 init_proc() {
 	list_init(&ready);
 	list_init(&block);
 	list_init(&free);
-    //create_sem(&sw_guard,1);
+
+    init_msg();
+
+    int i=0;
+    for(;i<PCB_NUM;i++)
+        list_add_before(&free,&proc_pool[i].list);
+
+    //PCB *ptest = create_kthread(drivertest,0,NULL);
+    //wakeup(ptest);
     pa = create_kthread(A,0,NULL);
     pb = create_kthread(B,0,NULL);
     pc = create_kthread(C,0,NULL);

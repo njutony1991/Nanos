@@ -15,32 +15,44 @@ extern ListHead ready;
 extern ListHead block;
 extern ListHead free;
 extern Sem sw_guard;
-void P(Sem*);
-void V(Sem*);
 
 void sleep(void){
-  list_del(&(current->list));
-  list_init(&(current->list));
-  list_add_before(&block,&(current->list));
+  lock();
+  if(!list_empty(&ready)){
+    current->in_ready = 0;
+    list_del(&current->list);
+    list_init(&(current->list));
+    list_add_before(&block,&current->list);
+  }
+  unlock();
   asm volatile("int $0x80");
 }
 
 void wakeup(PCB *p){
-   list_del(&(p->list));
-   list_init(&(p->list));
-   list_add_before(&ready,&(p->list));
+   lock();
+   if(p->in_ready==0){
+    p->in_ready = 1;
+    list_del(&(p->list));
+    list_init(&(p->list));
+    list_add_before(&ready,&(p->list));
+   }
+   unlock();
 }
 
-ListHead *ptr = &ready;
+void print_ready();
+
+ListHead *schedule_ptr = &ready;
 
 void
 schedule(void) {
-    if(ptr == &ready)
-      ptr = ptr->next;
-    current = list_entry(ptr,PCB,list);
-    ptr = ptr->next;
-    /**printk("in schedule,the current is\n");
-    printk("id : %d ,tf : %x\n",current->id,
-                                current->tf);**/
-    //current = pa;    
+    if(!list_empty(&ready)){
+        if(schedule_ptr == &ready)
+            schedule_ptr = schedule_ptr->next;
+        current = list_entry(schedule_ptr,PCB,list);
+        schedule_ptr = schedule_ptr->next;
+      // printk("current is id : %d ,tf : %x\n",current->pid,
+      //                            current->tf);
+      // print_ready();
+    }else
+       current = &idle;
 }
