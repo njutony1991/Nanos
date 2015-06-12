@@ -16,15 +16,19 @@ typedef struct PCB {
 	uint8_t kstack[KSTACK_SIZE];
 	pid_t pid;					// pid
 	int in_ready;
+	int lock_depth;
+	int IF_bit;
 	/**Sem for add/get messages**/
-	Sem message_guard; 			// mutual exclusion
- 	Sem empty;         			// can't get message from empty messages
+	//Sem message_guard; 			// mutual exclusion
+ 	//Sem empty;         			// can't get message from empty messages
  	
- 	//Sem message_guard[PCB_NUM+1];
-	//Sem any_guard;
+ 	Sem message_guard[PCB_NUM+1];
+ 	//Sem hard_ms_guard;
+	Sem any_guard;
+	
 	/**message queue**/
- 	ListHead messages;
-
+ 	ListHead messages[PCB_NUM+1];
+ 	ListHead hard_messages;
  	/**PCB linkedlist**/
  	ListHead list;
 } PCB;

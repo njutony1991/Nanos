@@ -19,8 +19,13 @@ void os_init_cont(void);
 
 void print_ready();
 
+//volatile int x=0;
+
 void
 os_init(void) {
+
+	//x = 1000;
+	//printk("\n~~~~~~~~x = %d\n~~~~~~~",x);
 	/* Notice that when we are here, IF is always 0 (see bootloader) */
 
 	/* We must set up kernel virtual memory first because our kernel
@@ -63,11 +68,11 @@ os_init_cont(void) {
 	
 	welcome();
 
-	/**int count = FREQ_8253 / HZ;
+	int count = FREQ_8253 / HZ;
 	assert(count < 65536);
 	out_byte(PORT_TIME + 3, 0x34);
 	out_byte(PORT_TIME    , count % 256);
-	out_byte(PORT_TIME    , count / 256);**/
+	out_byte(PORT_TIME    , count / 256);
 
 	sti();
 

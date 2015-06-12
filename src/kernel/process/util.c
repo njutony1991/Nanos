@@ -80,23 +80,34 @@ create_kthread(void *fun,int ch,PCB **next) {
 	funpcb->tf = tf;
 	funpcb->pid = id++;
     funpcb->in_ready = 0;
-    
-    create_sem(&funpcb->message_guard,1);
-    create_sem(&funpcb->empty,0);
-  
-    list_del(&funpcb->messages);
-    list_init(&funpcb->messages);
-    
+    funpcb->lock_depth = 0;
+    funpcb->IF_bit = 0;
+    //create_sem(&funpcb->message_guard,1);
+    //create_sem(&funpcb->empty,0);
+    int i;
+    for(i=0;i<=PCB_NUM;i++){
+        create_sem(&funpcb->message_guard[i],0);
+        list_del(&funpcb->messages[i]);
+        list_init(&funpcb->messages[i]);
+    }
+    create_sem(&funpcb->any_guard,0);
+
+    //create_sem(&funpcb->hard_ms_guard,0);
+    list_del(&funpcb->hard_messages);
+    list_init(&funpcb->hard_messages);
+
 	return funpcb;
 }
 
 void print_ready(){
+    lock();
     printk("ready:\n");
     ListHead *p1;
     list_foreach(p1,&ready)
         printk("id : %d ,tf : %x\n",((PCB *)(list_entry(p1,PCB,list)))->pid,
                                     ((PCB *)(list_entry(p1,PCB,list)))->tf);
     printk("-------------\n");
+    unlock();
 }
 
 void drivertest();
@@ -115,7 +126,7 @@ init_proc() {
 
     //PCB *ptest = create_kthread(drivertest,0,NULL);
     //wakeup(ptest);
-    pa = create_kthread(A,0,NULL);
+    /**pa = create_kthread(A,0,NULL);
     pb = create_kthread(B,0,NULL);
     pc = create_kthread(C,0,NULL);
     pd = create_kthread(D,0,NULL);
@@ -124,7 +135,7 @@ init_proc() {
     wakeup(pb);
     wakeup(pc);
     wakeup(pd);
-    wakeup(pe);
+    wakeup(pe);**/
 	/**pa = create_kthread(print_ch,'a',&pb);
 	printk("pa : %d ,pa->tf : %x\n",pa->id,pa->tf);
 	list_add_before(&ready,&(pa->list));

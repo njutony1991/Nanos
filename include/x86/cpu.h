@@ -108,6 +108,9 @@ wait_intr() {
 	asm volatile("hlt");
 }
 
+#define IF_MASK 0x00000200
+#define INTR assert(read_eflags() & IF_MASK)
+#define NOINTR assert(~read_eflags() & IF_MASK)
 
 #define NR_IRQ    256
 

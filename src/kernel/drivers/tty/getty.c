@@ -17,7 +17,7 @@ getty(void) {
 		 * 2. convert all small letters in buf into capitcal letters
 		 * 3. write the result on screen (use dev_write())
 		 */
-	    printk("In getty1\n");
+	    //printk("In getty1\n");
 	    size_t l=dev_read(name,current->pid,buf,0,200);
 	    int i;
 	    for(i=0;i<l;i++)

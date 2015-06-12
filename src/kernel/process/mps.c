@@ -1,9 +1,12 @@
 #include "kernel.h"
 
+void create_sem(Sem *,int);
+
 Msg message_pool[MSG_NUM];
 
 ListHead msg_free,msg_busy;
 
+Sem message_guard,message_mutex;
 
 void init_msg(){
   list_init(&msg_free);
@@ -11,33 +14,52 @@ void init_msg(){
   int i;
   for(i=0;i<MSG_NUM;i++)
     list_add_before(&msg_free,&message_pool[i].list);
+  create_sem(&message_guard,MSG_NUM);
+  create_sem(&message_mutex,1);
 }
 
 Msg *fetch_msg(){
+  P(&message_guard);
+  P(&message_mutex);
   lock();
+  //NOINTR;
+  //printk("current pid: %d\n",current->pid);
   if(list_empty(&msg_free))
     panic("no more free messages!");
   Msg* result = list_entry(msg_free.next,Msg,list);
   list_del(&result->list);
   list_init(&result->list);
   unlock();
+  V(&message_mutex);
   return result;
 }
 
 void free_msg(Msg *tofree){
+  P(&message_mutex);
   lock();
   list_init(&tofree->list);
   list_add_before(&msg_free,&tofree->list);
   unlock();
+  V(&message_mutex);
+  V(&message_guard);
 }
+
 extern PCB *current;
 
 void add_message(PCB* funpcb,Msg *message){
-    lock();
-    list_add_before(&funpcb->messages,&message->list);
-    V(&funpcb->empty);
-    wakeup(funpcb);  
-    unlock();
+    //lock();
+    //list_add_before(&funpcb->messages,&message->list);
+    //V(&funpcb->empty);
+    //wakeup(funpcb);
+    if(message->src>=0&&message->src<=PCB_NUM){
+      list_add_before(&funpcb->messages[message->src],&message->list);
+      V(&funpcb->message_guard[message->src]);
+    }else{
+      list_add_before(&funpcb->hard_messages,&message->list);
+      //V(&funpcb->hard_ms_guard);
+    }
+    V(&funpcb->any_guard);  
+    //unlock();
 }
 
 
@@ -61,6 +83,7 @@ void copy_msg(Msg *from,Msg *to,int in_driver){
 }
 
 void send(pid_t dest,Msg *m,int in_driver){
+  lock();
   Msg *tocopy = fetch_msg();
   copy_msg(m,tocopy,in_driver);
 
@@ -68,44 +91,51 @@ void send(pid_t dest,Msg *m,int in_driver){
   if(dest_pcb==NULL)
     panic("NULL PCB %d\n",dest);
   add_message(dest_pcb,tocopy);
+  unlock();
 }
 
 void receive(pid_t src,Msg *m,int in_driver){
-  ListHead *p;
-  Msg *target;
-  int flag = 0;
-
-  while(flag!=1){
-    P(&current->empty);
-    P(&current->message_guard);
+    //ListHead *p;
+    Msg *target=NULL;
+    P(&current->any_guard);
     if(src==ANY){
-      assert(!list_empty(&current->messages));
-      ListHead* first_message = (current->messages).next;
-      target = (Msg *)(list_entry(first_message,Msg,list));
-      list_del(first_message);
-      list_init(first_message);
-      flag = 1;
+      lock();
+      if(!list_empty(&current->hard_messages)){
+        ListHead* first_message = (current->hard_messages).next;
+        target = (Msg *)(list_entry(first_message,Msg,list));
+        list_del(first_message);
+        list_init(first_message);
+      }else{
+        int i;
+        for(i=0;i<=PCB_NUM;i++)
+        {
+          if((current->message_guard[i]).token>0){
+            P(&current->message_guard[i]);
+            assert(!list_empty(&current->messages[i]));
+            ListHead* first_message = (current->messages[i]).next;
+            target = (Msg *)(list_entry(first_message,Msg,list));
+            list_del(first_message);
+            list_init(first_message);
+            break;
+          }
+        }
+      }
+      unlock();
     } 
     else
     {
-      assert(!list_empty(&current->messages));
-      list_foreach(p,&(current->messages))
-          if(((Msg *)(list_entry(p,Msg,list)))->src==src){
-            flag = 1;
-            target = (Msg *)(list_entry(p,Msg,list));
-            list_del(p);
-            list_init(p);
-            break;
-          }
+      P(&current->message_guard[src]);
+      lock();
+      assert(!list_empty(&current->messages[src]));
+      ListHead *first_message = (current->messages[src]).next;
+      target = (Msg*)(list_entry(first_message,Msg,list));
+      list_del(first_message);
+      list_init(first_message);
+      unlock();
     }
-    V(&current->message_guard);
-    if(flag!=1){
-      V(&current->empty);
-      sleep();
+
+    if(target!=NULL){
+      copy_msg(target,m,in_driver);
+      free_msg(target);
     }
-  }
-  if(target!=NULL){
-    copy_msg(target,m,in_driver);
-    free_msg(target);
-  }
 }

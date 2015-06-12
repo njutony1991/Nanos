@@ -1,22 +1,28 @@
 #include "kernel.h"
 
-static int lockcount = 0;
-
 extern ListHead ready;
 extern ListHead block;
 extern ListHead free;
 extern PCB *current;
 
 void lock(){
+    if(current->lock_depth==0){
+        current->IF_bit = (read_eflags() & IF_MASK);
+    }
     cli();
-    lockcount++;
+    current->lock_depth++;
+    NOINTR;
 }
 
 void unlock(){
-    lockcount--;
-    if(lockcount<=0){
-      lockcount=0;
-      sti();
+    current->lock_depth--;
+    assert(current->lock_depth>=0);
+    if(current->lock_depth<=0){
+      current->lock_depth=0;
+      if(current->IF_bit!=0){
+        sti();
+        INTR;
+      }
     }
 }
 
@@ -48,11 +54,9 @@ void P(Sem *s){
 	lock();
 	(s->token)--;
 	if(s->token<0){
-     unlock();
 	   sleep_on_sem(s);
 	}
-  else
-    unlock();
+  unlock();
 }
 
 void V(Sem *s){

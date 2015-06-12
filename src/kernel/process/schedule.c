@@ -14,7 +14,6 @@ extern PCB *pc;**/
 extern ListHead ready;
 extern ListHead block;
 extern ListHead free;
-extern Sem sw_guard;
 
 void sleep(void){
   lock();
@@ -45,14 +44,15 @@ ListHead *schedule_ptr = &ready;
 
 void
 schedule(void) {
+    NOINTR;
     if(!list_empty(&ready)){
         if(schedule_ptr == &ready)
             schedule_ptr = schedule_ptr->next;
         current = list_entry(schedule_ptr,PCB,list);
         schedule_ptr = schedule_ptr->next;
-      // printk("current is id : %d ,tf : %x\n",current->pid,
-      //                            current->tf);
-      // print_ready();
+        //printk("current is id : %d ,tf : %x\n",current->pid,
+        //                          current->tf);
+        //print_ready();
     }else
        current = &idle;
 }
