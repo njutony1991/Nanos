@@ -21,7 +21,7 @@ typedef struct PCB {
 	/**Sem for add/get messages**/
 	//Sem message_guard; 			// mutual exclusion
  	//Sem empty;         			// can't get message from empty messages
- 	
+ 		
  	Sem message_guard[PCB_NUM+1];
  	//Sem hard_ms_guard;
 	Sem any_guard;

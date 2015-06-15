@@ -54,9 +54,9 @@ void irq_handle(TrapFrame *tf) {
 		 * You will use this code in Lab2.  */
 		int irq_id = irq - 1000;
 		//if(irq_id==1)
-		//	printk("key board~\n");
+		//	printk("~~~~~~key board~\n");
 		//if(irq_id==0)
-		//	printk("timer~\n");
+		//	printk("!!!!!!timer~\n");
 		assert(irq_id < NR_HARD_INTR);
 		struct IRQ_t *f = handles[irq_id];
 

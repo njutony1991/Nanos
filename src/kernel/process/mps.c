@@ -4,13 +4,12 @@ void create_sem(Sem *,int);
 
 Msg message_pool[MSG_NUM];
 
-ListHead msg_free,msg_busy;
+ListHead msg_free;
 
 Sem message_guard,message_mutex;
 
 void init_msg(){
   list_init(&msg_free);
-  list_init(&msg_busy);
   int i;
   for(i=0;i<MSG_NUM;i++)
     list_add_before(&msg_free,&message_pool[i].list);
@@ -19,9 +18,9 @@ void init_msg(){
 }
 
 Msg *fetch_msg(){
+    
   P(&message_guard);
   P(&message_mutex);
-  lock();
   //NOINTR;
   //printk("current pid: %d\n",current->pid);
   if(list_empty(&msg_free))
@@ -29,17 +28,14 @@ Msg *fetch_msg(){
   Msg* result = list_entry(msg_free.next,Msg,list);
   list_del(&result->list);
   list_init(&result->list);
-  unlock();
   V(&message_mutex);
   return result;
 }
 
 void free_msg(Msg *tofree){
   P(&message_mutex);
-  lock();
   list_init(&tofree->list);
   list_add_before(&msg_free,&tofree->list);
-  unlock();
   V(&message_mutex);
   V(&message_guard);
 }
@@ -47,19 +43,13 @@ void free_msg(Msg *tofree){
 extern PCB *current;
 
 void add_message(PCB* funpcb,Msg *message){
-    //lock();
-    //list_add_before(&funpcb->messages,&message->list);
-    //V(&funpcb->empty);
-    //wakeup(funpcb);
     if(message->src>=0&&message->src<=PCB_NUM){
       list_add_before(&funpcb->messages[message->src],&message->list);
       V(&funpcb->message_guard[message->src]);
     }else{
       list_add_before(&funpcb->hard_messages,&message->list);
-      //V(&funpcb->hard_ms_guard);
     }
     V(&funpcb->any_guard);  
-    //unlock();
 }
 
 
@@ -95,7 +85,6 @@ void send(pid_t dest,Msg *m,int in_driver){
 }
 
 void receive(pid_t src,Msg *m,int in_driver){
-    //ListHead *p;
     Msg *target=NULL;
     P(&current->any_guard);
     if(src==ANY){

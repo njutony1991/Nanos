@@ -1,7 +1,7 @@
 #ifndef _MSG_H_
 #define _MSG_H_
 #include "adt/list.h"
-#define MSG_NUM 5000
+#define MSG_NUM 50000
 typedef struct Message {
 	pid_t src, dest;
 	union {
