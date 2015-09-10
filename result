@@ -1,0 +1,2547 @@
+gcc -m32 -static -ggdb -MD -Wall -Werror -I./include -O2 -fno-builtin -fno-stack-protector -fno-omit-frame-pointer   -c -o src/kernel/test/timertest.o src/kernel/test/timertest.c
+ld -melf_i386 -e os_init -Ttext 0xC0100000 -o kernel src/kernel/memory/util.o src/kernel/memory/kvm.o src/kernel/drivers/hal.o src/kernel/drivers/ide/disk.o src/kernel/drivers/ide/ide.o src/kernel/drivers/ide/cache.o src/kernel/drivers/timer/timer.o src/kernel/drivers/drivers.o src/kernel/drivers/tty/getty.o src/kernel/drivers/tty/tty.o src/kernel/drivers/tty/banner.o src/kernel/drivers/tty/console.o src/kernel/drivers/tty/keyboard.o src/kernel/process/schedule.o src/kernel/process/ipc.o src/kernel/process/util.o src/kernel/process/mps.o src/kernel/test/mpstest.o src/kernel/test/scheduletest.o src/kernel/test/idedrivertest.o src/kernel/test/semtest.o src/kernel/test/timertest.o src/kernel/main.o src/kernel/irq/i8259.o src/kernel/irq/idt.o src/kernel/irq/irq_handle.o src/lib/serial.o src/lib/logo.o src/lib/string.o src/lib/printk.o src/lib/kcpy.o src/kernel/irq/do_irq.o
+objdump -D kernel > code.txt	# disassemble result
+readelf -a kernel > elf.txt		# obtain more information about the executable
+make[1]: 正在进入目录 `/home/tony/NanoOS/os-lab1/boot'
+make[1]: “bootblock”是最新的。
+make[1]:正在离开目录 `/home/tony/NanoOS/os-lab1/boot'
+cat boot/bootblock kernel > disk.img
+qemu-system-i386 -serial stdio disk.img
+
+timer pid: 1
+tty pid : 2
+in init_console
+in init_getty
+listing all registed devices:
+timer #1, #0
+tty1 #2, #0
+tty2 #2, #1
+tty3 #2, #2
+tty4 #2, #3
+hda #7, #0
+ready:
+id : 1 ,tf : c015e32c
+id : 2 ,tf : c0173004
+id : 3 ,tf : c0187cdc
+id : 4 ,tf : c019c9b4
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+Hello, OS World!
+current is id : 1 ,tf : c015e32c
+ready:
+id : 1 ,tf : c015e32c
+id : 2 ,tf : c0173004
+id : 3 ,tf : c0187cdc
+id : 4 ,tf : c019c9b4
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 2 ,tf : c0173004
+ready:
+id : 2 ,tf : c0173004
+id : 3 ,tf : c0187cdc
+id : 4 ,tf : c019c9b4
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 3 ,tf : c0187cdc
+ready:
+id : 2 ,tf : c0172f28
+id : 3 ,tf : c0187cdc
+id : 4 ,tf : c019c9b4
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 4 ,tf : c019c9b4
+ready:
+id : 2 ,tf : c0172f28
+id : 4 ,tf : c019c9b4
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 5 ,tf : c01b168c
+ready:
+id : 2 ,tf : c0172f28
+id : 5 ,tf : c01b168c
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 6 ,tf : c01c6364
+ready:
+id : 2 ,tf : c0172f28
+id : 6 ,tf : c01c6364
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 7 ,tf : c01db03c
+ready:
+id : 2 ,tf : c0172f28
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+current is id : 8 ,tf : c01efd14
+ready:
+id : 2 ,tf : c0172f28
+id : 7 ,tf : c01db03c
+id : 8 ,tf : c01efd14
+-------------
+before timer_test send
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 7 ,tf : c01db03c
+id : 1 ,tf : c015e280
+-------------
+current is id : 7 ,tf : c01db03c
+ready:
+id : 7 ,tf : c01db03c
+id : 1 ,tf : c015e280
+-------------
+current is id : 1 ,tf : c015e280
+ready:
+id : 1 ,tf : c015e280
+-------------
+in timer_driver_thread
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+id : 8 ,tf : c01efc78
+-------------
+current is id : 8 ,tf : c01efc78
+ready:
+id : 8 ,tf : c01efc78
+-------------
+after timer_test receive
+before timer_test send
+current is id : 1 ,tf : c015e280
+ready:
+id : 1 ,tf : c015e280
+-------------
+in timer_driver_thread
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+Capture: 3123123123123
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187a9c
+ready:
+id : 3 ,tf : c0187a9c
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+Capture: 123123123123
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187a9c
+ready:
+id : 3 ,tf : c0187a9c
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187a9c
+ready:
+id : 3 ,tf : c0187a9c
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f38
+ready:
+id : 2 ,tf : c0172f38
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+id : 8 ,tf : c01efc78
+-------------
+current is id : 8 ,tf : c01efc78
+ready:
+id : 8 ,tf : c01efc78
+-------------
+after timer_test receive
+before timer_test send
+current is id : 1 ,tf : c015e280
+ready:
+id : 1 ,tf : c015e280
+-------------
+in timer_driver_thread
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f38
+ready:
+id : 2 ,tf : c0172f38
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+Capture: 12312312312312
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f38
+ready:
+id : 2 ,tf : c0172f38
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f38
+ready:
+id : 2 ,tf : c0172f38
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+Capture: dfasdfasdfa
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f68
+ready:
+id : 2 ,tf : c0172f68
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+in process_tes
+end process_tes
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+Capture: fasdfasdfasdfasdfasdf
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 7 ,tf : c01daf6c
+ready:
+id : 7 ,tf : c01daf6c
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+Capture: asdfasdfasdfasdfasdfasdf
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f68
+ready:
+id : 2 ,tf : c0172f68
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f38
+ready:
+id : 2 ,tf : c0172f38
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f58
+ready:
+id : 2 ,tf : c0172f58
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+Capture: asdfasdfasdfasdf
+in process_tes
+end process_tes
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 3 ,tf : c0187ad0
+id : 7 ,tf : c01dafa0
+id : 8 ,tf : c01efc78
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+id : 7 ,tf : c01dafa0
+id : 8 ,tf : c01efc78
+-------------
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+id : 8 ,tf : c01efc78
+id : 2 ,tf : c0172f48
+-------------
+current is id : 8 ,tf : c01efc78
+ready:
+id : 8 ,tf : c01efc78
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 8 ,tf : c01efc44
+id : 2 ,tf : c0172f48
+-------------
+current is id : 8 ,tf : c01efc44
+ready:
+id : 8 ,tf : c01efc44
+id : 3 ,tf : c0187ad0
+-------------
+after timer_test receive
+before timer_test send
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+id : 1 ,tf : c015e280
+-------------
+current is id : 1 ,tf : c015e280
+ready:
+id : 1 ,tf : c015e280
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 1 ,tf : c015e24c
+id : 2 ,tf : c0172f48
+-------------
+current is id : 1 ,tf : c015e24c
+ready:
+id : 1 ,tf : c015e24c
+-------------
+current is id : 1 ,tf : c015e24c
+ready:
+id : 1 ,tf : c015e24c
+id : 2 ,tf : c0172f48
+-------------
+in timer_driver_thread
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+Capture: 
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 3 ,tf : c0187ad0
+ready:
+id : 3 ,tf : c0187ad0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f14
+ready:
+id : 2 ,tf : c0172f14
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+in process_tes
+end process_tes
+current is id : 7 ,tf : c01dafa0
+ready:
+id : 7 ,tf : c01dafa0
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f28
+ready:
+id : 2 ,tf : c0172f28
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
+current is id : 2 ,tf : c0172f48
+ready:
+id : 2 ,tf : c0172f48
+-------------
