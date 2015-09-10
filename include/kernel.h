@@ -8,4 +8,6 @@
 #include "msg.h"
 #include "hal.h"
 #include "time.h"
+#include "fm.h"
+#include "ramdisk.h"
 #endif

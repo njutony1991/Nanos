@@ -2,9 +2,6 @@
 #include "x86/x86.h"
 #include "memory.h"
 
-#define PORT_TIME 0x40
-#define FREQ_8253 1193182
-#define HZ        100000
 
 void init_page(void);
 void init_serial(void);
@@ -12,7 +9,7 @@ void init_segment(void);
 void init_idt(void);
 void init_intr(void);
 void init_proc(void);
-void init_driver(void);
+//void init_driver(void);
 void welcome(void);
 
 void os_init_cont(void);
@@ -62,17 +59,11 @@ os_init_cont(void) {
 	/* Initialize processes. You should fill this. */
 	init_proc();
 
-	init_driver();
 	
 	print_ready();
 	
 	welcome();
 
-	int count = FREQ_8253 / HZ;
-	assert(count < 65536);
-	out_byte(PORT_TIME + 3, 0x34);
-	out_byte(PORT_TIME    , count % 256);
-	out_byte(PORT_TIME    , count / 256);
 
 	sti();
 

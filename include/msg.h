@@ -1,7 +1,7 @@
 #ifndef _MSG_H_
 #define _MSG_H_
 #include "adt/list.h"
-#define MSG_NUM 50000
+
 typedef struct Message {
 	pid_t src, dest;
 	union {
@@ -21,10 +21,8 @@ typedef struct Message {
 	ListHead list;
 } Msg;
 
+
 void send(pid_t dest,Msg *m,int in_driver);
 void receive(pid_t src,Msg *m,int in_driver);
 
-Msg *fetch_msg();
-void free_msg(Msg*);
-void init_msg();
 #endif

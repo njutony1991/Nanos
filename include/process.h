@@ -4,9 +4,12 @@
 #define KSTACK_SIZE 4096
 #define PCB_NUM 50
 #define ANY -1
+#define MSG_NUM 2000
 #include "adt/list.h"
-
+#include "msg.h"
+#include "x86/x86.h"
 typedef struct Semaphore{
+	//pid_t pid;
 	int token;
 	ListHead block;     /**blocking queue**/
 }Sem;
@@ -18,12 +21,14 @@ typedef struct PCB {
 	int in_ready;
 	int lock_depth;
 	int IF_bit;
-	/**Sem for add/get messages**/
-	//Sem message_guard; 			// mutual exclusion
- 	//Sem empty;         			// can't get message from empty messages
- 		
+
+	CR3* pdtr;
+
+	ListHead msg_free;
+	Msg msg_pool[MSG_NUM];    // free message pool
+	Sem pool_empty,pool_mutex,pool_full;
+
  	Sem message_guard[PCB_NUM+1];
- 	//Sem hard_ms_guard;
 	Sem any_guard;
 	
 	/**message queue**/
@@ -58,4 +63,7 @@ void strcpy_to_kernel(PCB* pcb, char* dest, char* src);
 void strcpy_from_kernel(PCB* pcb, char* dest, char* src);
 
 
+Msg *fetch_msg(PCB*);
+void free_msg(Msg*);
+void init_msg(PCB *p);
 #endif

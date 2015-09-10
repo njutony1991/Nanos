@@ -20,6 +20,9 @@ void C();
 void D();
 void E();
 
+void init_driver(void);
+void init_fm();
+
 /**pid index,free PCB buffer**/
 static int id=1;
 /**num of allocated PCBs**/
@@ -28,6 +31,10 @@ static int num = 0;
 PCB proc_pool[PCB_NUM];
 
 PCB *pa,*pb,*pc,*pd,*pe;
+
+PCB *timertest;
+
+PCB *fmtest;
 
 PCB* fetch_pcb(pid_t pid){
     lock();
@@ -44,6 +51,8 @@ PCB* fetch_pcb(pid_t pid){
     unlock();
     return NULL;
 }
+
+void init_msg(PCB *p);
 
 PCB*
 create_kthread(void *fun,int ch,PCB **next) {
@@ -82,8 +91,9 @@ create_kthread(void *fun,int ch,PCB **next) {
     funpcb->in_ready = 0;
     funpcb->lock_depth = 0;
     funpcb->IF_bit = 0;
-    //create_sem(&funpcb->message_guard,1);
-    //create_sem(&funpcb->empty,0);
+
+    init_msg(funpcb);
+
     int i;
     for(i=0;i<=PCB_NUM;i++){
         create_sem(&funpcb->message_guard[i],0);
@@ -92,7 +102,6 @@ create_kthread(void *fun,int ch,PCB **next) {
     }
     create_sem(&funpcb->any_guard,0);
 
-    //create_sem(&funpcb->hard_ms_guard,0);
     list_del(&funpcb->hard_messages);
     list_init(&funpcb->hard_messages);
 
@@ -110,8 +119,9 @@ void print_ready(){
     unlock();
 }
 
+void fm_test();
+void timer_test();
 void drivertest();
-
 void print_ch(int ch,PCB **next);
 
 void
@@ -120,24 +130,30 @@ init_proc() {
 	list_init(&block);
 	list_init(&free);
 
-    init_msg();
 
     int i=0;
     for(;i<PCB_NUM;i++)
         list_add_before(&free,&proc_pool[i].list);
 
+    init_driver();
+    init_fm();
     //PCB *ptest = create_kthread(drivertest,0,NULL);
     //wakeup(ptest);
-    pa = create_kthread(A,0,NULL);
+    /**pa = create_kthread(A,0,NULL);
     pb = create_kthread(B,0,NULL);
     pc = create_kthread(C,0,NULL);
     pd = create_kthread(D,0,NULL);
-    pe = create_kthread(E,0,NULL);
-    wakeup(pa);
+    pe = create_kthread(E,0,NULL);**/
+    timertest = create_kthread(timer_test,0,NULL);
+    fmtest = create_kthread(fm_test,0,NULL);
+    //(fmtest->pool_mutex).pid = fmtest->pid;
+    /**wakeup(pa);
     wakeup(pb);
     wakeup(pc);
     wakeup(pd);
-    wakeup(pe);
+    wakeup(pe);**/
+    wakeup(timertest);
+    wakeup(fmtest);
 	/**
     pa = create_kthread(print_ch,'a',&pb);
 	printk("pa : %d ,pa->tf : %x\n",pa->pid,pa->tf);

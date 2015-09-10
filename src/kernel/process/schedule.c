@@ -53,6 +53,8 @@ schedule(void) {
         //printk("current is id : %d ,tf : %x\n",current->pid,
         //                          current->tf);
         //print_ready();
-    }else
+    }else{
        current = &idle;
+       //printk("\nin idle\n");
+    }
 }

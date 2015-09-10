@@ -5,6 +5,8 @@ extern ListHead block;
 extern ListHead free;
 extern PCB *current;
 
+extern PCB *fmtest;
+
 void lock(){
     if(current->lock_depth==0){
         current->IF_bit = (read_eflags() & IF_MASK);
@@ -61,11 +63,17 @@ void P(Sem *s){
 
 void V(Sem *s){
 	lock();
+  // if(s->pid==fmtest->pid)
+  //   printk(" in fmtest %d V,after lock()| ",fmtest->pid);
 	(s->token)++;
 	if(s->token<=0){
+    // if(s->pid==fmtest->pid)
+    //   printk(" in fmtest %d V,token: %d before wakeup_from_sem | ",fmtest->pid,s->token);
 		wakeup_from_sem(s);
 	}
-	unlock();	
+  // if(s->pid==fmtest->pid)
+  //   printk(" in fmtest %d V,before unlock()| ",fmtest->pid);
+	unlock();
 }
 
 

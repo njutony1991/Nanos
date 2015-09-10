@@ -2,45 +2,48 @@
 
 void create_sem(Sem *,int);
 
-Msg message_pool[MSG_NUM];
+extern PCB *current;
+extern pid_t RAMDISK;
 
-ListHead msg_free;
-
-Sem message_guard,message_mutex;
-
-void init_msg(){
-  list_init(&msg_free);
+void init_msg(PCB *p){
+  list_init(&p->msg_free);
   int i;
   for(i=0;i<MSG_NUM;i++)
-    list_add_before(&msg_free,&message_pool[i].list);
-  create_sem(&message_guard,MSG_NUM);
-  create_sem(&message_mutex,1);
+    list_add_before(&p->msg_free,&p->msg_pool[i].list);
+  create_sem(&p->pool_empty,MSG_NUM);
+  create_sem(&p->pool_mutex,1);
 }
 
-Msg *fetch_msg(){
-    
-  P(&message_guard);
-  P(&message_mutex);
-  //NOINTR;
-  //printk("current pid: %d\n",current->pid);
-  if(list_empty(&msg_free))
+
+Msg *fetch_msg(PCB *p){
+  do{
+      P(&p->pool_empty);
+  }while(list_empty(&p->msg_free));
+  P(&p->pool_mutex);
+  NOINTR;
+
+  if(list_empty(&p->msg_free))
     panic("no more free messages!");
-  Msg* result = list_entry(msg_free.next,Msg,list);
+  Msg* result = list_entry((p->msg_free).prev,Msg,list);
+
   list_del(&result->list);
+
   list_init(&result->list);
-  V(&message_mutex);
+
+  V(&p->pool_mutex);
+
   return result;
 }
 
 void free_msg(Msg *tofree){
-  P(&message_mutex);
+  P(&current->pool_mutex);
   list_init(&tofree->list);
-  list_add_before(&msg_free,&tofree->list);
-  V(&message_mutex);
-  V(&message_guard);
+  list_add_before(&current->msg_free,&tofree->list);
+  V(&current->pool_mutex);
+  V(&current->pool_empty);
 }
 
-extern PCB *current;
+
 
 void add_message(PCB* funpcb,Msg *message){
     if(message->src>=0&&message->src<=PCB_NUM){
@@ -74,13 +77,16 @@ void copy_msg(Msg *from,Msg *to,int in_driver){
 
 void send(pid_t dest,Msg *m,int in_driver){
   lock();
-  Msg *tocopy = fetch_msg();
-  copy_msg(m,tocopy,in_driver);
-
   PCB *dest_pcb = fetch_pcb(dest);
   if(dest_pcb==NULL)
     panic("NULL PCB %d\n",dest);
+ 
+  Msg *tocopy = fetch_msg(dest_pcb);
+
+  copy_msg(m,tocopy,in_driver);
+
   add_message(dest_pcb,tocopy);
+
   unlock();
 }
 

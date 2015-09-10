@@ -84,12 +84,18 @@ dev_rw(const char *dev_name, int type, pid_t reqst_pid, void *buf, off_t offset,
 	m.buf = buf;
 	m.offset = offset;
 	m.len = len;
+
+	// if(strcmp(dev_name,"ram")==0)
+	// 	printk(" before send read ram from %d| ",reqst_pid);
 	send(dev->pid, &m,1);
 	//printk("\nin devrw : m.type: %d m.src: %d  dev->pid: %d\n",m.type,m.src,dev->pid);
 	//printk("in devrw1\n");
-	
+	// if(strcmp(dev_name,"ram")==0)
+	// 	printk(" after send read ram from %d| ",reqst_pid);
+
 	receive(dev->pid, &m,1);
-	
+	// if(strcmp(dev_name,"ram")==0)
+	// 	printk(" after receive read ram from ram| ");
 	//printk("in devrw2\n");
 	
 	return m.ret;
